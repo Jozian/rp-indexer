@@ -1,12 +1,17 @@
-FROM golang:1.20
+FROM golang:1.14-buster AS builder
+ENV CGO_ENABLED=0
+ARG COMPILE_FLAGS
+WORKDIR /root/rp-indexer
+COPY . /root/rp-indexer
+RUN go build -ldflags "${COMPILE_FLAGS}" -o rp-indexer ./cmd/rp-indexer
 
-WORKDIR /usr/src/app
-
-# pre-copy/cache go.mod for pre-downloading dependencies and only redownloading them in subsequent builds if they change
-COPY go.mod go.sum ./
-RUN go mod download && go mod verify
-
-COPY . .
-RUN go build -v -o /usr/local/bin/app github.com/nyaruka/rp-indexer/v8/cmd/rp-indexer
-
-CMD ["app"]
+FROM debian:buster AS rp-indexer
+RUN adduser --uid 1000 --disabled-password --gecos '' --home /srv/rp-indexer rp-indexer
+RUN apt-get -yq update \
+        && DEBIAN_FRONTEND=noninteractive apt-get install -y \
+                unattended-upgrades \
+        && rm -rf /var/lib/apt/lists/* \
+        && apt-get clean
+COPY --from=builder /root/rp-indexer/rp-indexer /usr/bin/
+USER rp-indexer
+ENTRYPOINT ["rp-indexer"]
