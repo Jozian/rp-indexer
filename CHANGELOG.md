@@ -1,3 +1,33 @@
+v6.4.0
+----------
+ * 6.4.0 candidate
+
+v6.3.0
+----------
+ * Fix creating of location keyword fields when values have punctuation
+
+v6.2.0
+----------
+ * add rp-indexer to .gitignore
+ * 6.2.0 RC
+
+v6.1.0
+----------
+ * Change ElasticSearch version to v7 (backwards incompatible change)
+
+v6.0.0
+----------
+ * Update README
+
+v5.7.2
+----------
+ * add status field to index for querying
+
+v5.7.1
+----------
+ * Use contact status instead of is_stopped / is_blocked
+ * Retry HTTP calls to ES
+
 v5.7.0
 ----------
  * Index last_seen_on
