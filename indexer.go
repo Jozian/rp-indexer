@@ -68,7 +68,7 @@ func CreateNewIndex(url string, alias string) (string, error) {
 	idx := 0
 
 	// check if it exists
-	for true {
+	for {
 		resp, err := http.Get(fmt.Sprintf("%s/%s", url, physicalIndex))
 		if err != nil {
 			return "", err
@@ -332,7 +332,7 @@ func IndexContacts(db *sql.DB, elasticURL string, index string, lastModified tim
 			break
 		}
 
-		elapsed := time.Now().Sub(start)
+		elapsed := time.Since(start)
 		rate := float32(processedCount) / (float32(elapsed) / float32(time.Second))
 		log.WithFields(map[string]interface{}{
 			"rate":    int(rate),
@@ -399,7 +399,7 @@ SELECT org_id, id, modified_on, is_active, row_to_json(t) FROM (
                        select case
                     when value ? 'ward'
                       then jsonb_build_object(
-                        'ward_keyword', trim(substring(value ->> 'ward' from  '(?!.* > )([\w ]+)'))
+                        'ward_keyword', trim(substring(value ->> 'ward' from  '(?!.* > )([^>]+)'))
                       )
                     else '{}' :: jsonb
                     end || district_value.value as value
@@ -407,7 +407,7 @@ SELECT org_id, id, modified_on, is_active, row_to_json(t) FROM (
                   select case
                            when value ? 'district'
                              then jsonb_build_object(
-                               'district_keyword', trim(substring(value ->> 'district' from  '(?!.* > )([\w ]+)'))
+                               'district_keyword', trim(substring(value ->> 'district' from  '(?!.* > )([^>]+)'))
                              )
                            else '{}' :: jsonb
                            end || state_value.value as value
@@ -416,7 +416,7 @@ SELECT org_id, id, modified_on, is_active, row_to_json(t) FROM (
                          select case
                                   when value ? 'state'
                                     then jsonb_build_object(
-                                      'state_keyword', trim(substring(value ->> 'state' from  '(?!.* > )([\w ]+)'))
+                                      'state_keyword', trim(substring(value ->> 'state' from  '(?!.* > )([^>]+)'))
                                     )
                                   else '{}' :: jsonb
                                   end ||
