@@ -1,6 +1,9 @@
-FROM golang:1.16-buster AS builder
+FROM golang:1.18-buster AS builder
 ENV CGO_ENABLED=0
 ARG COMPILE_FLAGS
+COPY go.mod /root/rp-indexer/go.mod
+COPY go.sum /root/rp-indexer/go.sum
+RUN go mod download
 WORKDIR /root/rp-indexer
 COPY . /root/rp-indexer
 RUN go build -ldflags "${COMPILE_FLAGS}" -o rp-indexer ./cmd/rp-indexer
