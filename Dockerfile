@@ -1,4 +1,4 @@
-FROM golang:1.20
+FROM golang:1.23
 
 WORKDIR /usr/src/app
 
@@ -7,6 +7,6 @@ COPY go.mod go.sum ./
 RUN go mod download && go mod verify
 
 COPY . .
-RUN go build -v -o /usr/local/bin/app github.com/nyaruka/rp-indexer/cmd/rp-indexer
+RUN go build -v -o /usr/local/bin/app ./cmd/rp-indexer
 
 CMD ["app"]
